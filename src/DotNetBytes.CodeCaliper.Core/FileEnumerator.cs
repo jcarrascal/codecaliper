@@ -1,4 +1,4 @@
-﻿namespace DotNetBytes.CodeCaliper.Core.Input
+﻿namespace DotNetBytes.CodeCaliper.Core
 {
     using System;
     using System.Collections;

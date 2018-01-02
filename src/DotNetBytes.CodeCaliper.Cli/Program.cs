@@ -1,10 +1,10 @@
-﻿using System;
-
-namespace DotNetBytes.CodeCaliper.Cli
+﻿namespace DotNetBytes.CodeCaliper.Cli
 {
-    class Program
+    using System;
+
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
         }
