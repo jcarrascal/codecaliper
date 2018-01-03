@@ -7,32 +7,14 @@
     using Microsoft.CodeAnalysis.VisualBasic;
     using LanguageVersion = Microsoft.CodeAnalysis.CSharp.LanguageVersion;
 
-    public class SyntaxTreeLoader
+    public class SyntaxTreeLoader : TransformTask<string, SyntaxTreeLoader.Result>
     {
         public SyntaxTreeLoader(ProcessContext context)
+            : base(context, Environment.ProcessorCount * 2)
         {
-            this.Context = context;
-            this.BlockOptions =
-                new ExecutionDataflowBlockOptions {MaxDegreeOfParallelism = Environment.ProcessorCount * 2};
-            this.LinkOptions = new DataflowLinkOptions {PropagateCompletion = true};
-            this.TransformBlock =
-                new TransformBlock<string, Result>((Func<string, Result>) this.Transform, this.BlockOptions);
         }
 
-        public ExecutionDataflowBlockOptions BlockOptions { get; }
-
-        public DataflowLinkOptions LinkOptions { get; }
-
-        public ProcessContext Context { get; }
-
-        public TransformBlock<string, Result> TransformBlock { get; }
-
-        public void LinkTo(ISourceBlock<string> source)
-        {
-            source.LinkTo(this.TransformBlock, this.LinkOptions, this.Predicate);
-        }
-
-        public bool Predicate(string fileId)
+        public override bool Predicate(string fileId)
         {
             var fileInfo = this.Context[fileId];
             string fullPath = fileInfo.FullPath;
@@ -40,7 +22,7 @@
                    fullPath.EndsWith(".vb", StringComparison.InvariantCultureIgnoreCase);
         }
 
-        public Result Transform(string fileId)
+        protected override Result Transform(string fileId)
         {
             var fileInfo = this.Context[fileId];
             string fullPath = fileInfo.FullPath;
@@ -49,7 +31,7 @@
             return new Result {FileId = fileId};
         }
 
-        public SyntaxTree LoadSyntaxTree(string fullPath, string sourceCode)
+        internal SyntaxTree LoadSyntaxTree(string fullPath, string sourceCode)
         {
             if (fullPath.EndsWith(".cs", StringComparison.InvariantCultureIgnoreCase))
             {

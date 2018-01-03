@@ -17,21 +17,6 @@
         }
 
         [Fact]
-        public void Ctor_WhenGivenTheProcessContext_ThenTheBlockIsSetup()
-        {
-            var processContext = new ProcessContext();
-
-            var syntaxTreeLoader = new SyntaxTreeLoader(processContext);
-
-            Assert.Equal(processContext, syntaxTreeLoader.Context);
-            Assert.NotNull(syntaxTreeLoader.BlockOptions);
-            Assert.True(syntaxTreeLoader.BlockOptions.MaxDegreeOfParallelism > 0);
-            Assert.NotNull(syntaxTreeLoader.LinkOptions);
-            Assert.True(syntaxTreeLoader.LinkOptions.PropagateCompletion);
-            Assert.NotNull(syntaxTreeLoader.TransformBlock);
-        }
-
-        [Fact]
         public void LoadSyntaxTree_WhenGivenTheFullPathAndCSharpCode_ThenReturnsTheSyntaxTree()
         {
             var processContext = new ProcessContext();
