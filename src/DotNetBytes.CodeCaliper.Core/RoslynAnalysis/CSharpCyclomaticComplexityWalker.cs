@@ -128,21 +128,36 @@
         /// <inheritdoc />
         public override void VisitIfStatement(IfStatementSyntax node)
         {
-            ++this.mCurrentObject.CyclomaticComplexity;
+            var complexity = CountLogicalOperators(node.Condition) + 1;
+            this.mCurrentObject.CyclomaticComplexity += complexity;
             base.VisitIfStatement(node);
+        }
+
+        private static int CountLogicalOperators(ExpressionSyntax node)
+        {
+            if (node is BinaryExpressionSyntax condition)
+            {
+                var op = condition.OperatorToken.ValueText;
+                return CountLogicalOperators(condition.Left) + CountLogicalOperators(condition.Right)
+                       + (op == "&&" || op == "||" ? 1 : 0);
+            }
+
+            return 0;
         }
 
         /// <inheritdoc />
         public override void VisitWhileStatement(WhileStatementSyntax node)
         {
-            ++this.mCurrentObject.CyclomaticComplexity;
+            var complexity = CountLogicalOperators(node.Condition) + 1;
+            this.mCurrentObject.CyclomaticComplexity += complexity;
             base.VisitWhileStatement(node);
         }
 
         /// <inheritdoc />
         public override void VisitDoStatement(DoStatementSyntax node)
         {
-            ++this.mCurrentObject.CyclomaticComplexity;
+            var complexity = CountLogicalOperators(node.Condition) + 1;
+            this.mCurrentObject.CyclomaticComplexity += complexity;
             base.VisitDoStatement(node);
         }
 
@@ -156,7 +171,8 @@
         /// <inheritdoc />
         public override void VisitForStatement(ForStatementSyntax node)
         {
-            ++this.mCurrentObject.CyclomaticComplexity;
+            var complexity = CountLogicalOperators(node.Condition) + 1;
+            this.mCurrentObject.CyclomaticComplexity += complexity;
             base.VisitForStatement(node);
         }
 

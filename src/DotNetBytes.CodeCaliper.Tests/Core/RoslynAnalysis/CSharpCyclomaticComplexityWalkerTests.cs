@@ -138,6 +138,30 @@
         }
 
         [Fact]
+        public void Visit_WhenGivenAMethodWithADoWhileStatementWithTwoConditions_ThenRegistersTheMethodWithComplexity2()
+        {
+            var sourceCode = @"class Foo
+            {
+                void Bar()
+                {
+                    do
+                    {
+                        System.Console.Out.Flush();
+                    }
+                    while (1 == 1 && 2 == 2);
+                    System.Console.ReadKey();
+                }
+            }";
+            var context = WalkSourceCode("Foo.cs", sourceCode);
+
+            Assert.True(context.ContainsKey("Foo.cs:Foo"));
+            Assert.Equal(3, context["Foo.cs:Foo"].CyclomaticComplexity);
+
+            Assert.True(context.ContainsKey("Foo.cs:Foo:Bar()void"));
+            Assert.Equal(3, context["Foo.cs:Foo:Bar()void"].CyclomaticComplexity);
+        }
+
+        [Fact]
         public void Visit_WhenGivenAMethodWithAForeachStatement_ThenRegistersTheMethodWithComplexity2()
         {
             var sourceCode = @"class Foo
@@ -224,6 +248,29 @@
 
             Assert.True(context.ContainsKey("Foo.cs:Foo<TInput, TOutput>:Bar()void"));
             Assert.Equal(2, context["Foo.cs:Foo<TInput, TOutput>:Bar()void"].CyclomaticComplexity);
+        }
+
+        [Fact]
+        public void Visit_WhenGivenAMethodWithAnIfStatementWithTwoConditions_ThenRegistersTheMethodWithComplexity3()
+        {
+            var sourceCode = @"class Foo<TInput, TOutput>
+            {
+                void Bar()
+                {
+                    if (1 == 1 && 2 == 2)
+                    {
+                        System.Console.Out.Flush();
+                    }
+                    System.Console.ReadKey();
+                }
+            }";
+            var context = WalkSourceCode("Foo.cs", sourceCode);
+
+            Assert.True(context.ContainsKey("Foo.cs:Foo<TInput, TOutput>"));
+            Assert.Equal(3, context["Foo.cs:Foo<TInput, TOutput>"].CyclomaticComplexity);
+
+            Assert.True(context.ContainsKey("Foo.cs:Foo<TInput, TOutput>:Bar()void"));
+            Assert.Equal(3, context["Foo.cs:Foo<TInput, TOutput>:Bar()void"].CyclomaticComplexity);
         }
 
         [Fact]
@@ -346,6 +393,52 @@
 
             Assert.True(context.ContainsKey("Foo.cs:Foo:Bar()void"));
             Assert.Equal(2, context["Foo.cs:Foo:Bar()void"].CyclomaticComplexity);
+        }
+
+        [Fact]
+        public void Visit_WhenGivenAMethodWithAWhileStatementWithTwoConditions_ThenRegistersTheMethodWithComplexity3()
+        {
+            var sourceCode = @"class Foo
+            {
+                void Bar()
+                {
+                    while (1 == 1 && 2 == 2)
+                    {
+                        System.Console.Out.Flush();
+                    }
+                    System.Console.ReadKey();
+                }
+            }";
+            var context = WalkSourceCode("Foo.cs", sourceCode);
+
+            Assert.True(context.ContainsKey("Foo.cs:Foo"));
+            Assert.Equal(3, context["Foo.cs:Foo"].CyclomaticComplexity);
+
+            Assert.True(context.ContainsKey("Foo.cs:Foo:Bar()void"));
+            Assert.Equal(3, context["Foo.cs:Foo:Bar()void"].CyclomaticComplexity);
+        }
+
+        [Fact]
+        public void Visit_WhenGivenAMethodWithTheForStatementWithTwoConditions_ThenRegistersTheMethodWithComplexity3()
+        {
+            var sourceCode = @"class Foo
+            {
+                void Bar()
+                {
+                    for (int i = 0; i < 10 || i < 20; i++)
+                    {
+                        System.Console.Out.Flush();
+                    }
+                    System.Console.ReadKey();
+                }
+            }";
+            var context = WalkSourceCode("Foo.cs", sourceCode);
+
+            Assert.True(context.ContainsKey("Foo.cs:Foo"));
+            Assert.Equal(3, context["Foo.cs:Foo"].CyclomaticComplexity);
+
+            Assert.True(context.ContainsKey("Foo.cs:Foo:Bar()void"));
+            Assert.Equal(3, context["Foo.cs:Foo:Bar()void"].CyclomaticComplexity);
         }
 
         [Fact]
