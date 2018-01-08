@@ -31,6 +31,7 @@
         {
             this.mCurrentObject = file;
             this.mCurrentObject.CyclomaticComplexity = 0;
+            this.mCurrentObject.SourceLinesOfCode = 0;
             this.Visit(syntaxTree.GetRoot());
         }
 
@@ -41,12 +42,14 @@
             type.Identifier = this.mCurrentObject.Identifier + ":" + node.Identifier +
                               node.TypeParameterList;
             type.CyclomaticComplexity = 0;
+            type.SourceLinesOfCode = 0;
 
             this.mObjects.Push(this.mCurrentObject);
             this.mCurrentObject = type;
             base.VisitClassDeclaration(node);
             this.mCurrentObject = this.mObjects.Pop();
             this.mCurrentObject.CyclomaticComplexity += type.CyclomaticComplexity;
+            this.mCurrentObject.SourceLinesOfCode += type.SourceLinesOfCode;
             this.mContext[type.Identifier] = type;
         }
 
@@ -58,13 +61,21 @@
                                   node.TypeParameterList + "(" + StringifyParameterList(node.ParameterList) + ")" +
                                   node.ReturnType;
             function.CyclomaticComplexity = 1;
+            function.SourceLinesOfCode = 0;
 
             this.mObjects.Push(this.mCurrentObject);
             this.mCurrentObject = function;
             base.VisitMethodDeclaration(node);
             this.mCurrentObject = this.mObjects.Pop();
             this.mCurrentObject.CyclomaticComplexity += function.CyclomaticComplexity;
+            this.mCurrentObject.SourceLinesOfCode += function.SourceLinesOfCode;
             this.mContext[function.Identifier] = function;
+        }
+
+        public override void VisitBlock(BlockSyntax node)
+        {
+            this.mCurrentObject.SourceLinesOfCode += node.Statements.Count;
+            base.VisitBlock(node);
         }
 
         /// <inheritdoc />
@@ -79,12 +90,14 @@
             dynamic function = new ExpandoObject();
             function.Identifier = this.mCurrentObject.Identifier + ":" + parentIdentifier + ":" + node.Keyword;
             function.CyclomaticComplexity = 1;
+            function.SourceLinesOfCode = 0;
 
             this.mObjects.Push(this.mCurrentObject);
             this.mCurrentObject = function;
             base.VisitAccessorDeclaration(node);
             this.mCurrentObject = this.mObjects.Pop();
             this.mCurrentObject.CyclomaticComplexity += function.CyclomaticComplexity;
+            this.mCurrentObject.SourceLinesOfCode += function.SourceLinesOfCode;
             this.mContext[function.Identifier] = function;
         }
 
@@ -100,12 +113,14 @@
             function.Identifier = this.mCurrentObject.Identifier + ":" + node.Identifier +
                                   node.ParameterList;
             function.CyclomaticComplexity = 1;
+            function.SourceLinesOfCode = 0;
 
             this.mObjects.Push(this.mCurrentObject);
             this.mCurrentObject = function;
             base.VisitConstructorDeclaration(node);
             this.mCurrentObject = this.mObjects.Pop();
             this.mCurrentObject.CyclomaticComplexity += function.CyclomaticComplexity;
+            this.mCurrentObject.SourceLinesOfCode += function.SourceLinesOfCode;
             this.mContext[function.Identifier] = function;
         }
 
@@ -116,12 +131,14 @@
             function.Identifier = this.mCurrentObject.Identifier + ":~" + node.Identifier +
                                   node.ParameterList;
             function.CyclomaticComplexity = 1;
+            function.SourceLinesOfCode = 0;
 
             this.mObjects.Push(this.mCurrentObject);
             this.mCurrentObject = function;
             base.VisitDestructorDeclaration(node);
             this.mCurrentObject = this.mObjects.Pop();
             this.mCurrentObject.CyclomaticComplexity += function.CyclomaticComplexity;
+            this.mCurrentObject.SourceLinesOfCode += function.SourceLinesOfCode;
             this.mContext[function.Identifier] = function;
         }
 
@@ -176,11 +193,15 @@
             base.VisitForStatement(node);
         }
 
-        /// <inheritdoc />
-        public override void VisitCaseSwitchLabel(CaseSwitchLabelSyntax node)
+        public override void VisitSwitchSection(SwitchSectionSyntax node)
         {
-            ++this.mCurrentObject.CyclomaticComplexity;
-            base.VisitCaseSwitchLabel(node);
+            if (node.Labels.All(l => l.Keyword.Text != "default"))
+            {
+                ++this.mCurrentObject.CyclomaticComplexity;
+            }
+
+            this.mCurrentObject.SourceLinesOfCode += node.Statements.Count;
+            base.VisitSwitchSection(node);
         }
 
         /// <inheritdoc />
@@ -194,6 +215,7 @@
         public override void VisitSimpleLambdaExpression(SimpleLambdaExpressionSyntax node)
         {
             ++this.mCurrentObject.CyclomaticComplexity;
+            ++this.mCurrentObject.SourceLinesOfCode;
             base.VisitSimpleLambdaExpression(node);
         }
 

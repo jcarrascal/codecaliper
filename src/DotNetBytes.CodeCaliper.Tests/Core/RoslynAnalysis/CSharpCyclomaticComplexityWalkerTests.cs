@@ -41,9 +41,11 @@
 
             Assert.True(context.ContainsKey("Foo.cs:Foo:Foo()"));
             Assert.Equal(1, context["Foo.cs:Foo:Foo()"].CyclomaticComplexity);
+            Assert.Equal(0, context["Foo.cs:Foo:Foo()"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo:~Foo()"));
             Assert.Equal(1, context["Foo.cs:Foo:~Foo()"].CyclomaticComplexity);
+            Assert.Equal(0, context["Foo.cs:Foo:~Foo()"].SourceLinesOfCode);
         }
 
         [Fact]
@@ -61,12 +63,15 @@
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(2, context["Foo.cs:Foo"].CyclomaticComplexity);
+            Assert.Equal(1, context["Foo.cs:Foo"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo:[int]int:get"));
             Assert.Equal(1, context["Foo.cs:Foo:[int]int:get"].CyclomaticComplexity);
+            Assert.Equal(1, context["Foo.cs:Foo:[int]int:get"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo:[int]int:set"));
             Assert.Equal(1, context["Foo.cs:Foo:[int]int:set"].CyclomaticComplexity);
+            Assert.Equal(0, context["Foo.cs:Foo:[int]int:set"].SourceLinesOfCode);
         }
 
         [Fact]
@@ -85,12 +90,15 @@
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(2, context["Foo.cs:Foo"].CyclomaticComplexity);
+            Assert.Equal(2, context["Foo.cs:Foo"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo:Property:get"));
             Assert.Equal(1, context["Foo.cs:Foo:Property:get"].CyclomaticComplexity);
+            Assert.Equal(1, context["Foo.cs:Foo:Property:get"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo:Property:set"));
             Assert.Equal(1, context["Foo.cs:Foo:Property:set"].CyclomaticComplexity);
+            Assert.Equal(1, context["Foo.cs:Foo:Property:set"].SourceLinesOfCode);
         }
 
         [Fact]
@@ -101,16 +109,21 @@
             {
                 void Bar()
                 {
-                    string.Join(string.Empty, System.Environment.UserName.Select(delegate (char c) { return char.ToUpper(c); }));
+                    string.Join(string.Empty, System.Environment.UserName.Select(delegate (char c) 
+                        {
+                            return char.ToUpper(c);
+                        }));
                 }
             }";
             var context = WalkSourceCode("Foo.cs", sourceCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(2, context["Foo.cs:Foo"].CyclomaticComplexity);
+            Assert.Equal(2, context["Foo.cs:Foo"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo:Bar()void"));
             Assert.Equal(2, context["Foo.cs:Foo:Bar()void"].CyclomaticComplexity);
+            Assert.Equal(2, context["Foo.cs:Foo:Bar()void"].SourceLinesOfCode);
         }
 
         [Fact]
@@ -132,9 +145,11 @@
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(2, context["Foo.cs:Foo"].CyclomaticComplexity);
+            Assert.Equal(3, context["Foo.cs:Foo"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo:Bar()void"));
             Assert.Equal(2, context["Foo.cs:Foo:Bar()void"].CyclomaticComplexity);
+            Assert.Equal(3, context["Foo.cs:Foo:Bar()void"].SourceLinesOfCode);
         }
 
         [Fact]
@@ -156,9 +171,11 @@
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(3, context["Foo.cs:Foo"].CyclomaticComplexity);
+            Assert.Equal(3, context["Foo.cs:Foo"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo:Bar()void"));
             Assert.Equal(3, context["Foo.cs:Foo:Bar()void"].CyclomaticComplexity);
+            Assert.Equal(3, context["Foo.cs:Foo:Bar()void"].SourceLinesOfCode);
         }
 
         [Fact]
@@ -179,9 +196,11 @@
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(2, context["Foo.cs:Foo"].CyclomaticComplexity);
+            Assert.Equal(3, context["Foo.cs:Foo"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo:Bar()void"));
             Assert.Equal(2, context["Foo.cs:Foo:Bar()void"].CyclomaticComplexity);
+            Assert.Equal(3, context["Foo.cs:Foo:Bar()void"].SourceLinesOfCode);
         }
 
         [Fact]
@@ -202,9 +221,11 @@
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(2, context["Foo.cs:Foo"].CyclomaticComplexity);
+            Assert.Equal(3, context["Foo.cs:Foo"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo:Bar()void"));
             Assert.Equal(2, context["Foo.cs:Foo:Bar()void"].CyclomaticComplexity);
+            Assert.Equal(3, context["Foo.cs:Foo:Bar()void"].SourceLinesOfCode);
         }
 
         [Fact]
@@ -222,9 +243,11 @@
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(2, context["Foo.cs:Foo"].CyclomaticComplexity);
+            Assert.Equal(2, context["Foo.cs:Foo"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo:Bar()void"));
             Assert.Equal(2, context["Foo.cs:Foo:Bar()void"].CyclomaticComplexity);
+            Assert.Equal(2, context["Foo.cs:Foo:Bar()void"].SourceLinesOfCode);
         }
 
         [Fact]
@@ -245,9 +268,11 @@
 
             Assert.True(context.ContainsKey("Foo.cs:Foo<TInput, TOutput>"));
             Assert.Equal(2, context["Foo.cs:Foo<TInput, TOutput>"].CyclomaticComplexity);
+            Assert.Equal(3, context["Foo.cs:Foo<TInput, TOutput>"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo<TInput, TOutput>:Bar()void"));
             Assert.Equal(2, context["Foo.cs:Foo<TInput, TOutput>:Bar()void"].CyclomaticComplexity);
+            Assert.Equal(3, context["Foo.cs:Foo<TInput, TOutput>:Bar()void"].SourceLinesOfCode);
         }
 
         [Fact]
@@ -268,9 +293,11 @@
 
             Assert.True(context.ContainsKey("Foo.cs:Foo<TInput, TOutput>"));
             Assert.Equal(3, context["Foo.cs:Foo<TInput, TOutput>"].CyclomaticComplexity);
+            Assert.Equal(3, context["Foo.cs:Foo<TInput, TOutput>"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo<TInput, TOutput>:Bar()void"));
             Assert.Equal(3, context["Foo.cs:Foo<TInput, TOutput>:Bar()void"].CyclomaticComplexity);
+            Assert.Equal(3, context["Foo.cs:Foo<TInput, TOutput>:Bar()void"].SourceLinesOfCode);
         }
 
         [Fact]
@@ -287,9 +314,11 @@
 
             Assert.True(context.ContainsKey("Foo.cs:Foo<TInput, TOutput>"));
             Assert.Equal(1, context["Foo.cs:Foo<TInput, TOutput>"].CyclomaticComplexity);
+            Assert.Equal(1, context["Foo.cs:Foo<TInput, TOutput>"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo<TInput, TOutput>:Bar()void"));
             Assert.Equal(1, context["Foo.cs:Foo<TInput, TOutput>:Bar()void"].CyclomaticComplexity);
+            Assert.Equal(1, context["Foo.cs:Foo<TInput, TOutput>:Bar()void"].SourceLinesOfCode);
         }
 
         [Fact]
@@ -316,9 +345,11 @@
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(3, context["Foo.cs:Foo"].CyclomaticComplexity);
+            Assert.Equal(6, context["Foo.cs:Foo"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo:Bar()void"));
             Assert.Equal(3, context["Foo.cs:Foo:Bar()void"].CyclomaticComplexity);
+            Assert.Equal(6, context["Foo.cs:Foo:Bar()void"].SourceLinesOfCode);
         }
 
         [Fact]
@@ -341,9 +372,11 @@
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(1, context["Foo.cs:Foo"].CyclomaticComplexity);
+            Assert.Equal(4, context["Foo.cs:Foo"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo:Bar()void"));
             Assert.Equal(1, context["Foo.cs:Foo:Bar()void"].CyclomaticComplexity);
+            Assert.Equal(4, context["Foo.cs:Foo:Bar()void"].SourceLinesOfCode);
         }
 
         [Fact]
@@ -353,6 +386,7 @@
             {
                 void Bar()
                 {
+                    Console.WriteLine(""Before"");
                     try
                     {
                         Console.ReadKey();
@@ -361,15 +395,18 @@
                     {
                         Console.WriteLine(ex.ToString());
                     }
+                    Console.WriteLine(""After"");
                 }
             }";
             var context = WalkSourceCode("Foo.cs", sourceCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(2, context["Foo.cs:Foo"].CyclomaticComplexity);
+            Assert.Equal(5, context["Foo.cs:Foo"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo:Bar()void"));
             Assert.Equal(2, context["Foo.cs:Foo:Bar()void"].CyclomaticComplexity);
+            Assert.Equal(5, context["Foo.cs:Foo:Bar()void"].SourceLinesOfCode);
         }
 
         [Fact]
@@ -390,9 +427,11 @@
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(2, context["Foo.cs:Foo"].CyclomaticComplexity);
+            Assert.Equal(3, context["Foo.cs:Foo"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo:Bar()void"));
             Assert.Equal(2, context["Foo.cs:Foo:Bar()void"].CyclomaticComplexity);
+            Assert.Equal(3, context["Foo.cs:Foo:Bar()void"].SourceLinesOfCode);
         }
 
         [Fact]
@@ -413,9 +452,11 @@
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(3, context["Foo.cs:Foo"].CyclomaticComplexity);
+            Assert.Equal(3, context["Foo.cs:Foo"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo:Bar()void"));
             Assert.Equal(3, context["Foo.cs:Foo:Bar()void"].CyclomaticComplexity);
+            Assert.Equal(3, context["Foo.cs:Foo:Bar()void"].SourceLinesOfCode);
         }
 
         [Fact]
@@ -436,9 +477,11 @@
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(3, context["Foo.cs:Foo"].CyclomaticComplexity);
+            Assert.Equal(3, context["Foo.cs:Foo"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo:Bar()void"));
             Assert.Equal(3, context["Foo.cs:Foo:Bar()void"].CyclomaticComplexity);
+            Assert.Equal(3, context["Foo.cs:Foo:Bar()void"].SourceLinesOfCode);
         }
 
         [Fact]
@@ -463,9 +506,11 @@
 
             Assert.True(context.ContainsKey("Foo.cs:Foo<TInput, TOutput>"));
             Assert.Equal(3, context["Foo.cs:Foo<TInput, TOutput>"].CyclomaticComplexity);
+            Assert.Equal(5, context["Foo.cs:Foo<TInput, TOutput>"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo<TInput, TOutput>:Bar()void"));
             Assert.Equal(3, context["Foo.cs:Foo<TInput, TOutput>:Bar()void"].CyclomaticComplexity);
+            Assert.Equal(5, context["Foo.cs:Foo<TInput, TOutput>:Bar()void"].SourceLinesOfCode);
         }
 
         [Fact]
@@ -486,12 +531,15 @@
 
             Assert.True(context.ContainsKey("Foo.cs:Foo<TInput, TOutput>"));
             Assert.Equal(2, context["Foo.cs:Foo<TInput, TOutput>"].CyclomaticComplexity);
+            Assert.Equal(2, context["Foo.cs:Foo<TInput, TOutput>"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo<TInput, TOutput>:Bar()void"));
             Assert.Equal(1, context["Foo.cs:Foo<TInput, TOutput>:Bar()void"].CyclomaticComplexity);
+            Assert.Equal(1, context["Foo.cs:Foo<TInput, TOutput>:Bar()void"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo<TInput, TOutput>:Baz<T>()void"));
             Assert.Equal(1, context["Foo.cs:Foo<TInput, TOutput>:Baz<T>()void"].CyclomaticComplexity);
+            Assert.Equal(1, context["Foo.cs:Foo<TInput, TOutput>:Baz<T>()void"].SourceLinesOfCode);
         }
     }
 }
