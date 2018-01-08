@@ -7,17 +7,17 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-    public class CSharpCyclomaticComplexityWalker : CSharpSyntaxWalker
+    public class CSharpCodeMetricsWalker : CSharpSyntaxWalker
     {
         private readonly ProcessContext mContext;
         private readonly Stack<dynamic> mObjects = new Stack<dynamic>();
         private dynamic mCurrentObject;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="CSharpCyclomaticComplexityWalker" /> class.
+        ///     Initializes a new instance of the <see cref="CSharpCodeMetricsWalker" /> class.
         /// </summary>
         /// <param name="context">The context.</param>
-        public CSharpCyclomaticComplexityWalker(ProcessContext context)
+        public CSharpCodeMetricsWalker(ProcessContext context)
         {
             this.mContext = context;
         }
@@ -196,9 +196,7 @@
         public override void VisitSwitchSection(SwitchSectionSyntax node)
         {
             if (node.Labels.All(l => l.Keyword.Text != "default"))
-            {
                 ++this.mCurrentObject.CyclomaticComplexity;
-            }
 
             this.mCurrentObject.SourceLinesOfCode += node.Statements.Count;
             base.VisitSwitchSection(node);

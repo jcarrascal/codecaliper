@@ -6,13 +6,13 @@
     using Microsoft.CodeAnalysis.CSharp;
     using Xunit;
 
-    public class CSharpCyclomaticComplexityWalkerTests
+    public class CSharpCodeMetricsWalkerTests
     {
         private static ProcessContext WalkSourceCode(string fileId, string sourceCode)
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
             var context = new ProcessContext();
-            var walker = new CSharpCyclomaticComplexityWalker(context);
+            var walker = new CSharpCodeMetricsWalker(context);
             dynamic file = new ExpandoObject();
             file.Identifier = fileId;
             context[fileId] = file;
