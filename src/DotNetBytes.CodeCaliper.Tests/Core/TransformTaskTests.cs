@@ -1,15 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DotNetBytes.CodeCaliper.Tests.Core
+﻿namespace DotNetBytes.CodeCaliper.Tests.Core
 {
     using DotNetBytes.CodeCaliper.Core;
-    using DotNetBytes.CodeCaliper.Core.RoslynAnalysis;
     using Xunit;
 
     public class TransformTaskTests
     {
+        internal class TestTransformClass : TransformTask<int, string>
+        {
+            public TestTransformClass(ProcessContext context, int maxDegreeOfParallelism)
+                : base(context, maxDegreeOfParallelism)
+            {
+            }
+
+            protected override string Transform(int input)
+            {
+                return input.ToString();
+            }
+        }
+
         [Fact]
         public void Ctor_WhenGivenTheProcessContextAndDegreeOfParallelism_ThenTheBlockIsSetupAccordingly()
         {
@@ -23,19 +31,6 @@ namespace DotNetBytes.CodeCaliper.Tests.Core
             Assert.NotNull(transformClass.LinkOptions);
             Assert.True(transformClass.LinkOptions.PropagateCompletion);
             Assert.NotNull(transformClass.TransformBlock);
-        }
-
-        internal class TestTransformClass : TransformTask<int, string>
-        {
-            public TestTransformClass(ProcessContext context, int maxDegreeOfParallelism)
-                : base(context, maxDegreeOfParallelism)
-            {
-            }
-
-            protected override string Transform(int input)
-            {
-                return input.ToString();
-            }
         }
     }
 }
