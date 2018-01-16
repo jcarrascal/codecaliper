@@ -8,13 +8,14 @@
 
     public class CSharpCodeMetricsWalkerTests
     {
-        private static ProcessContext WalkSourceCode(string fileId, string sourceCode)
+        private static ProcessContext WalkSourceCode(string fileId, string fullPath, string sourceCode)
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
             var context = new ProcessContext();
             var walker = new CSharpCodeMetricsWalker(context);
             dynamic file = new ExpandoObject();
             file.Identifier = fileId;
+            file.FullPath = fullPath;
             context[fileId] = file;
 
             walker.Visit(file, syntaxTree);
@@ -35,15 +36,23 @@
                 {
                 }
             }";
-            var context = WalkSourceCode("Foo.cs", sourceCode);
+            var context = WalkSourceCode("Foo.cs", @"Path\To\Foo.cs", sourceCode);
 
+            Assert.Equal(@"Path\To\Foo.cs", context["Foo.cs:Foo"].FullPath);
+            Assert.Equal(1, context["Foo.cs:Foo"].StartLineNumber);
+            Assert.Equal(9, context["Foo.cs:Foo"].EndLineNumber);
             Assert.Equal(2, context["Foo.cs:Foo"].CyclomaticComplexity);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo:Foo()"));
+            Assert.Equal(@"Path\To\Foo.cs", context["Foo.cs:Foo:Foo()"].FullPath);
+            Assert.Equal(3, context["Foo.cs:Foo:Foo()"].StartLineNumber);
+            Assert.Equal(5, context["Foo.cs:Foo:Foo()"].EndLineNumber);
             Assert.Equal(1, context["Foo.cs:Foo:Foo()"].CyclomaticComplexity);
             Assert.Equal(0, context["Foo.cs:Foo:Foo()"].SourceLinesOfCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo:~Foo()"));
+            Assert.Equal(6, context["Foo.cs:Foo:~Foo()"].StartLineNumber);
+            Assert.Equal(8, context["Foo.cs:Foo:~Foo()"].EndLineNumber);
             Assert.Equal(1, context["Foo.cs:Foo:~Foo()"].CyclomaticComplexity);
             Assert.Equal(0, context["Foo.cs:Foo:~Foo()"].SourceLinesOfCode);
         }
@@ -59,7 +68,7 @@
                     set { }
                 }
             }";
-            var context = WalkSourceCode("Foo.cs", sourceCode);
+            var context = WalkSourceCode("Foo.cs", @"Path\To\Foo.cs", sourceCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(2, context["Foo.cs:Foo"].CyclomaticComplexity);
@@ -86,7 +95,7 @@
                     set { property = value; }
                 }
             }";
-            var context = WalkSourceCode("Foo.cs", sourceCode);
+            var context = WalkSourceCode("Foo.cs", @"Path\To\Foo.cs", sourceCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(2, context["Foo.cs:Foo"].CyclomaticComplexity);
@@ -115,7 +124,7 @@
                         }));
                 }
             }";
-            var context = WalkSourceCode("Foo.cs", sourceCode);
+            var context = WalkSourceCode("Foo.cs", @"Path\To\Foo.cs", sourceCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(2, context["Foo.cs:Foo"].CyclomaticComplexity);
@@ -141,7 +150,7 @@
                     System.Console.ReadKey();
                 }
             }";
-            var context = WalkSourceCode("Foo.cs", sourceCode);
+            var context = WalkSourceCode("Foo.cs", @"Path\To\Foo.cs", sourceCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(2, context["Foo.cs:Foo"].CyclomaticComplexity);
@@ -167,7 +176,7 @@
                     System.Console.ReadKey();
                 }
             }";
-            var context = WalkSourceCode("Foo.cs", sourceCode);
+            var context = WalkSourceCode("Foo.cs", @"Path\To\Foo.cs", sourceCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(3, context["Foo.cs:Foo"].CyclomaticComplexity);
@@ -192,7 +201,7 @@
                     System.Console.ReadKey();
                 }
             }";
-            var context = WalkSourceCode("Foo.cs", sourceCode);
+            var context = WalkSourceCode("Foo.cs", @"Path\To\Foo.cs", sourceCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(2, context["Foo.cs:Foo"].CyclomaticComplexity);
@@ -217,7 +226,7 @@
                     System.Console.ReadKey();
                 }
             }";
-            var context = WalkSourceCode("Foo.cs", sourceCode);
+            var context = WalkSourceCode("Foo.cs", @"Path\To\Foo.cs", sourceCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(2, context["Foo.cs:Foo"].CyclomaticComplexity);
@@ -239,7 +248,7 @@
                     string.Join(string.Empty, Environment.User.Select(c => c.ToUpper()));
                 }
             }";
-            var context = WalkSourceCode("Foo.cs", sourceCode);
+            var context = WalkSourceCode("Foo.cs", @"Path\To\Foo.cs", sourceCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(2, context["Foo.cs:Foo"].CyclomaticComplexity);
@@ -264,7 +273,7 @@
                     System.Console.ReadKey();
                 }
             }";
-            var context = WalkSourceCode("Foo.cs", sourceCode);
+            var context = WalkSourceCode("Foo.cs", @"Path\To\Foo.cs", sourceCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo<TInput, TOutput>"));
             Assert.Equal(2, context["Foo.cs:Foo<TInput, TOutput>"].CyclomaticComplexity);
@@ -289,7 +298,7 @@
                     System.Console.ReadKey();
                 }
             }";
-            var context = WalkSourceCode("Foo.cs", sourceCode);
+            var context = WalkSourceCode("Foo.cs", @"Path\To\Foo.cs", sourceCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo<TInput, TOutput>"));
             Assert.Equal(3, context["Foo.cs:Foo<TInput, TOutput>"].CyclomaticComplexity);
@@ -310,7 +319,7 @@
                     System.Console.ReadKey();
                 }
             }";
-            var context = WalkSourceCode("Foo.cs", sourceCode);
+            var context = WalkSourceCode("Foo.cs", @"Path\To\Foo.cs", sourceCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo<TInput, TOutput>"));
             Assert.Equal(1, context["Foo.cs:Foo<TInput, TOutput>"].CyclomaticComplexity);
@@ -341,7 +350,7 @@
                     System.Console.ReadKey();
                 }
             }";
-            var context = WalkSourceCode("Foo.cs", sourceCode);
+            var context = WalkSourceCode("Foo.cs", @"Path\To\Foo.cs", sourceCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(3, context["Foo.cs:Foo"].CyclomaticComplexity);
@@ -368,7 +377,7 @@
                     System.Console.ReadKey();
                 }
             }";
-            var context = WalkSourceCode("Foo.cs", sourceCode);
+            var context = WalkSourceCode("Foo.cs", @"Path\To\Foo.cs", sourceCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(1, context["Foo.cs:Foo"].CyclomaticComplexity);
@@ -398,7 +407,7 @@
                     Console.WriteLine(""After"");
                 }
             }";
-            var context = WalkSourceCode("Foo.cs", sourceCode);
+            var context = WalkSourceCode("Foo.cs", @"Path\To\Foo.cs", sourceCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(2, context["Foo.cs:Foo"].CyclomaticComplexity);
@@ -423,7 +432,7 @@
                     System.Console.ReadKey();
                 }
             }";
-            var context = WalkSourceCode("Foo.cs", sourceCode);
+            var context = WalkSourceCode("Foo.cs", @"Path\To\Foo.cs", sourceCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(2, context["Foo.cs:Foo"].CyclomaticComplexity);
@@ -448,7 +457,7 @@
                     System.Console.ReadKey();
                 }
             }";
-            var context = WalkSourceCode("Foo.cs", sourceCode);
+            var context = WalkSourceCode("Foo.cs", @"Path\To\Foo.cs", sourceCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(3, context["Foo.cs:Foo"].CyclomaticComplexity);
@@ -473,7 +482,7 @@
                     System.Console.ReadKey();
                 }
             }";
-            var context = WalkSourceCode("Foo.cs", sourceCode);
+            var context = WalkSourceCode("Foo.cs", @"Path\To\Foo.cs", sourceCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo"));
             Assert.Equal(3, context["Foo.cs:Foo"].CyclomaticComplexity);
@@ -502,7 +511,7 @@
                     System.Console.ReadKey();
                 }
             }";
-            var context = WalkSourceCode("Foo.cs", sourceCode);
+            var context = WalkSourceCode("Foo.cs", @"Path\To\Foo.cs", sourceCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo<TInput, TOutput>"));
             Assert.Equal(3, context["Foo.cs:Foo<TInput, TOutput>"].CyclomaticComplexity);
@@ -527,7 +536,7 @@
                     System.Console.ReadKey();
                 }
             }";
-            var context = WalkSourceCode("Foo.cs", sourceCode);
+            var context = WalkSourceCode("Foo.cs", @"Path\To\Foo.cs", sourceCode);
 
             Assert.True(context.ContainsKey("Foo.cs:Foo<TInput, TOutput>"));
             Assert.Equal(2, context["Foo.cs:Foo<TInput, TOutput>"].CyclomaticComplexity);

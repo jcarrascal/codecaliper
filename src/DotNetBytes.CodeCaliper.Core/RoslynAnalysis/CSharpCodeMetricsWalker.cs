@@ -35,10 +35,20 @@
             this.Visit(syntaxTree.GetRoot());
         }
 
+        private ExpandoObject InitializExpandoObject(SyntaxNode node)
+        {
+            var lineSpan = node.SyntaxTree.GetLineSpan(node.Span);
+            dynamic obj = new ExpandoObject();
+            obj.FullPath = this.mCurrentScope.FullPath;
+            obj.StartLineNumber = lineSpan.StartLinePosition.Line;
+            obj.EndLineNumber = lineSpan.EndLinePosition.Line;
+            return obj;
+        }
+
         /// <inheritdoc />
         public override void VisitClassDeclaration(ClassDeclarationSyntax node)
         {
-            dynamic type = new ExpandoObject();
+            dynamic type = this.InitializExpandoObject(node);
             type.Identifier = this.mCurrentScope.Identifier + ":" + node.Identifier +
                               node.TypeParameterList;
             type.CyclomaticComplexity = 0;
@@ -56,7 +66,8 @@
         /// <inheritdoc />
         public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
         {
-            dynamic function = new ExpandoObject();
+            var lineSpan = node.SyntaxTree.GetLineSpan(node.Span);
+            dynamic function = this.InitializExpandoObject(node);
             function.Identifier = this.mCurrentScope.Identifier + ":" + node.Identifier +
                                   node.TypeParameterList + "(" + StringifyParameterList(node.ParameterList) + ")" +
                                   node.ReturnType;
@@ -87,7 +98,8 @@
             else if (node.Parent.Parent is IndexerDeclarationSyntax indexer)
                 parentIdentifier = "[" + StringifyParameterList(indexer.ParameterList) + "]" + indexer.Type;
 
-            dynamic function = new ExpandoObject();
+            var lineSpan = node.SyntaxTree.GetLineSpan(node.Span);
+            dynamic function = this.InitializExpandoObject(node);
             function.Identifier = this.mCurrentScope.Identifier + ":" + parentIdentifier + ":" + node.Keyword;
             function.CyclomaticComplexity = 1;
             function.SourceLinesOfCode = 0;
@@ -109,7 +121,8 @@
         /// <inheritdoc />
         public override void VisitConstructorDeclaration(ConstructorDeclarationSyntax node)
         {
-            dynamic function = new ExpandoObject();
+            var lineSpan = node.SyntaxTree.GetLineSpan(node.Span);
+            dynamic function = this.InitializExpandoObject(node);
             function.Identifier = this.mCurrentScope.Identifier + ":" + node.Identifier +
                                   node.ParameterList;
             function.CyclomaticComplexity = 1;
@@ -127,7 +140,8 @@
         /// <inheritdoc />
         public override void VisitDestructorDeclaration(DestructorDeclarationSyntax node)
         {
-            dynamic function = new ExpandoObject();
+            var lineSpan = node.SyntaxTree.GetLineSpan(node.Span);
+            dynamic function = this.InitializExpandoObject(node);
             function.Identifier = this.mCurrentScope.Identifier + ":~" + node.Identifier +
                                   node.ParameterList;
             function.CyclomaticComplexity = 1;
